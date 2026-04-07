@@ -3,166 +3,149 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Script 3 — Match & Calculation Documentation v2</title>
+<title>GHG BEX — Carbon Footprint Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0f1117;
-    --bg2: #161820;
-    --bg3: #1e2028;
-    --border: #2a2d3a;
-    --border2: #353849;
-    --text: #e8eaf0;
-    --text2: #9da3b8;
-    --text3: #5c6280;
-    --accent: #5b8def;
-    --green: #4caf82;
-    --amber: #e8a84c;
-    --coral: #e0655a;
-    --purple: #9b7fe8;
-    --teal: #4db8a8;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-    --serif: 'IBM Plex Serif', serif;
+  #gate {
+    position: fixed; inset: 0;
+    background: #0f1117;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.75; }
-
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 3rem 4rem 2.5rem;
-    display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem;
+  #gate-box {
+    background: #161820;
+    border: 1px solid #2a2d3a;
+    border-radius: 10px;
+    padding: 40px 48px;
+    width: 100%; max-width: 380px;
+    text-align: center;
   }
-  .header-left .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .5rem; }
-  .header-left h1 { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--text); line-height: 1.2; }
-  .header-left .subtitle { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--text2); margin-top: .4rem; }
-  .header-meta { text-align: right; font-family: var(--mono); font-size: 11px; color: var(--text3); line-height: 2; }
-  .header-meta span { color: var(--text2); }
-  .version-badge { display:inline-block; background: rgba(76,175,130,.15); border: 1px solid rgba(76,175,130,.3); color: var(--green); font-family: var(--mono); font-size: 10px; padding: .2rem .6rem; border-radius: 3px; margin-left: .5rem; vertical-align: middle; }
-
-  .layout { display: grid; grid-template-columns: 230px 1fr; min-height: calc(100vh - 120px); }
-
-  nav { border-right: 1px solid var(--border); padding: 2rem 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .nav-section { padding: 0 1.5rem; margin-bottom: 1.5rem; }
-  .nav-label { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: .5rem; }
-  nav a { display: block; font-size: 13px; color: var(--text2); text-decoration: none; padding: .3rem 0; transition: color .15s; }
-  nav a:hover { color: var(--accent); }
-  nav a.active { color: var(--accent); font-weight: 500; }
-  .nav-new { font-family: var(--mono); font-size: 9px; background: rgba(76,175,130,.15); color: var(--green); border: 1px solid rgba(76,175,130,.25); padding: .05rem .35rem; border-radius: 2px; margin-left: .4rem; vertical-align: middle; }
-
-  main { padding: 3rem 4rem; max-width: 920px; }
-
-  section { margin-bottom: 4rem; scroll-margin-top: 2rem; }
-  .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-  .section-num { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(91,141,239,.1); border: 1px solid rgba(91,141,239,.2); padding: .2rem .6rem; border-radius: 4px; flex-shrink: 0; }
-  .section-new { font-family: var(--mono); font-size: 10px; color: var(--green); background: rgba(76,175,130,.1); border: 1px solid rgba(76,175,130,.2); padding: .15rem .5rem; border-radius: 4px; flex-shrink: 0; }
-  h2 { font-family: var(--mono); font-size: 18px; font-weight: 600; color: var(--text); }
-  h3 { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: .08em; margin: 2rem 0 .75rem; }
-  p { color: var(--text2); margin-bottom: 1rem; }
-  p strong { color: var(--text); font-weight: 500; }
-
-  pre { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem 1.5rem; font-family: var(--mono); font-size: 12.5px; line-height: 1.8; overflow-x: auto; margin: 1rem 0 1.5rem; color: var(--text2); }
-  code { font-family: var(--mono); font-size: 12.5px; background: var(--bg2); border: 1px solid var(--border); padding: .1rem .4rem; border-radius: 3px; color: var(--teal); }
-  .kw { color: var(--purple); } .fn { color: var(--accent); } .str { color: var(--green); } .cm { color: var(--text3); font-style: italic; } .num { color: var(--amber); }
-
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 13.5px; }
-  th { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); text-align: left; padding: .6rem 1rem; border-bottom: 1px solid var(--border2); }
-  td { padding: .7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  td strong { color: var(--text); } td code { font-size: 11.5px; }
-
-  .badge { display: inline-block; font-family: var(--mono); font-size: 10.5px; padding: .15rem .55rem; border-radius: 3px; font-weight: 600; letter-spacing: .04em; }
-  .badge-green  { background: rgba(76,175,130,.15); color: var(--green);  border: 1px solid rgba(76,175,130,.25); }
-  .badge-amber  { background: rgba(232,168,76,.15);  color: var(--amber);  border: 1px solid rgba(232,168,76,.25); }
-  .badge-coral  { background: rgba(224,101,90,.15);  color: var(--coral);  border: 1px solid rgba(224,101,90,.25); }
-  .badge-blue   { background: rgba(91,141,239,.15);  color: var(--accent); border: 1px solid rgba(91,141,239,.25); }
-  .badge-purple { background: rgba(155,127,232,.15); color: var(--purple); border: 1px solid rgba(155,127,232,.25); }
-  .badge-teal   { background: rgba(77,184,168,.15);  color: var(--teal);   border: 1px solid rgba(77,184,168,.25); }
-
-  .callout { border-left: 3px solid; padding: 1rem 1.25rem; border-radius: 0 6px 6px 0; margin: 1rem 0 1.5rem; font-size: 14px; }
-  .callout p { margin: 0; }
-  .callout-blue   { border-color: var(--accent);  background: rgba(91,141,239,.07); }
-  .callout-green  { border-color: var(--green);   background: rgba(76,175,130,.07); }
-  .callout-amber  { border-color: var(--amber);   background: rgba(232,168,76,.07); }
-  .callout-coral  { border-color: var(--coral);   background: rgba(224,101,90,.07); }
-  .callout-purple { border-color: var(--purple);  background: rgba(155,127,232,.07); }
-
-  .flow { display: flex; align-items: center; gap: 0; margin: 1.25rem 0 1.75rem; flex-wrap: wrap; row-gap: .75rem; }
-  .flow-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; padding: .6rem 1rem; font-family: var(--mono); font-size: 12px; color: var(--text); white-space: nowrap; }
-  .flow-box.blue   { border-color: rgba(91,141,239,.4);  background: rgba(91,141,239,.08); color: var(--accent); }
-  .flow-box.green  { border-color: rgba(76,175,130,.4);  background: rgba(76,175,130,.08); color: var(--green); }
-  .flow-box.amber  { border-color: rgba(232,168,76,.4);  background: rgba(232,168,76,.08); color: var(--amber); }
-  .flow-box.coral  { border-color: rgba(224,101,90,.4);  background: rgba(224,101,90,.08); color: var(--coral); }
-  .flow-box.purple { border-color: rgba(155,127,232,.4); background: rgba(155,127,232,.08); color: var(--purple); }
-  .flow-box.teal   { border-color: rgba(77,184,168,.4);  background: rgba(77,184,168,.08); color: var(--teal); }
-  .flow-arrow { color: var(--text3); font-size: 16px; padding: 0 .4rem; flex-shrink: 0; }
-
-  .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin: 1rem 0 1.5rem; }
-  .tier-card { border: 1px solid var(--border2); border-radius: 6px; padding: 1rem; background: var(--bg2); }
-  .tier-card .tier-num { font-family: var(--mono); font-size: 20px; font-weight: 600; margin-bottom: .3rem; }
-  .tier-card .tier-label { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: .4rem; }
-  .tier-card .tier-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
-  .tier-card.t1 { border-color: rgba(76,175,130,.4); } .tier-card.t1 .tier-num { color: var(--green); }
-  .tier-card.t2 { border-color: rgba(77,184,168,.4); } .tier-card.t2 .tier-num { color: var(--teal); }
-  .tier-card.t3 { border-color: rgba(232,168,76,.4); } .tier-card.t3 .tier-num { color: var(--amber); }
-  .tier-card.t4 { border-color: rgba(224,101,90,.4); } .tier-card.t4 .tier-num { color: var(--coral); }
-
-  .output-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1rem 0 1.5rem; }
-  .output-card { border: 1px solid var(--border2); border-radius: 6px; padding: 1.25rem; background: var(--bg2); }
-  .output-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 600; margin-bottom: .5rem; }
-  .output-card p { font-size: 12.5px; color: var(--text3); margin-bottom: .75rem; }
-
-  .example { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem 1.5rem; margin: 1rem 0 1.5rem; font-size: 13.5px; }
-  .example-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
-  .example-row { display: flex; gap: 1rem; margin-bottom: .3rem; align-items: baseline; }
-  .example-key { font-family: var(--mono); font-size: 11.5px; color: var(--text3); width: 180px; flex-shrink: 0; }
-  .example-val { font-family: var(--mono); font-size: 12px; color: var(--text); }
-  .example-val.hi { color: var(--green); } .example-val.mid { color: var(--amber); } .example-val.lo { color: var(--coral); }
-
-  .formula { background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; padding: 1rem 1.5rem; margin: 1rem 0 1.5rem; font-family: var(--mono); font-size: 14px; color: var(--text); text-align: center; letter-spacing: .03em; }
-  .formula .op { color: var(--text3); }
-  .formula .var-blue { color: var(--accent); } .formula .var-teal { color: var(--teal); } .formula .var-amber { color: var(--amber); } .formula .var-coral { color: var(--coral); } .formula .result { color: var(--green); font-weight: 600; }
-
-  .loop-diagram { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 1.5rem auto; width: fit-content; }
-  .loop-step { border: 1px solid var(--border2); border-radius: 6px; padding: .7rem 2rem; font-family: var(--mono); font-size: 12.5px; text-align: center; min-width: 320px; background: var(--bg2); }
-  .loop-arrow-down { color: var(--text3); font-size: 18px; line-height: 1.4; }
-  .loop-note { font-size: 11px; color: var(--text3); margin-top: .15rem; }
-
-  .cell-ref { display: inline-block; font-family: var(--mono); font-size: 10.5px; background: rgba(155,127,232,.12); border: 1px solid rgba(155,127,232,.25); color: var(--purple); padding: .1rem .45rem; border-radius: 3px; margin-right: .3rem; }
-
-  /* assumption pattern cards */
-  .assumption-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; margin: 1rem 0 1.5rem; }
-  .assumption-card { background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 1rem 1.25rem; }
-  .assumption-card .ac-type { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); margin-bottom: .4rem; }
-  .assumption-card .ac-formula { font-family: var(--mono); font-size: 13px; color: var(--amber); margin-bottom: .5rem; }
-  .assumption-card .ac-example { font-size: 12.5px; color: var(--text3); }
-  .assumption-card .ac-example span { color: var(--text2); }
-
-  /* QA result cards */
-  .qa-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; margin: 1rem 0 1.5rem; }
-  .qa-card { background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 1rem 1.25rem; }
-  .qa-card .qa-id { font-family: var(--mono); font-size: 11px; color: var(--purple); margin-bottom: .3rem; }
-  .qa-card .qa-val { font-family: var(--mono); font-size: 18px; font-weight: 600; margin-bottom: .2rem; }
-  .qa-card .qa-desc { font-size: 12.5px; color: var(--text3); line-height: 1.5; }
-  .qa-card.ok { border-color: rgba(76,175,130,.3); } .qa-card.ok .qa-val { color: var(--green); }
-  .qa-card.warn { border-color: rgba(232,168,76,.3); } .qa-card.warn .qa-val { color: var(--amber); }
-  .qa-card.info { border-color: rgba(91,141,239,.3); } .qa-card.info .qa-val { color: var(--accent); }
-
-  hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-
-  footer { border-top: 1px solid var(--border); padding: 1.5rem 4rem; font-family: var(--mono); font-size: 11px; color: var(--text3); display: flex; justify-content: space-between; }
-
-  @media (max-width: 768px) {
-    header { padding: 2rem; flex-direction: column; align-items: flex-start; }
-    .layout { grid-template-columns: 1fr; }
-    nav { display: none; }
-    main { padding: 2rem; }
-    .tier-grid, .assumption-grid, .qa-grid { grid-template-columns: 1fr; }
-    .output-grid { grid-template-columns: 1fr; }
-  }
+  #gate-box .g-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #4caf82; margin-bottom: 12px; }
+  #gate-box h2 { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; color: #e8eaf0; margin-bottom: 6px; }
+  #gate-box p { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #5c6280; margin-bottom: 28px; }
+  #gate-input { width: 100%; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 6px; padding: 11px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #e8eaf0; outline: none; margin-bottom: 12px; transition: border-color 0.2s; }
+  #gate-input:focus { border-color: #4caf82; }
+  #gate-input.shake { animation: shake 0.35s ease; border-color: #e0655a; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  #gate-btn { width: 100%; background: rgba(76,175,130,0.12); border: 1px solid rgba(76,175,130,0.35); border-radius: 6px; padding: 11px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #4caf82; cursor: pointer; transition: background 0.15s; }
+  #gate-btn:hover { background: rgba(76,175,130,0.22); }
+  #gate-error { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #e0655a; margin-top: 10px; min-height: 16px; }
+  #app { display: none; }
 </style>
 </head>
 <body>
+
+<div id="gate">
+  <div id="gate-box">
+    <div class="g-tag">Carbon Data — Internal</div>
+    <h2>GHG BEX Platform</h2>
+    <p>This document is restricted.<br>Enter the access password to continue.</p>
+    <input id="gate-input" type="password" placeholder="Password" autocomplete="off"/>
+    <button id="gate-btn" onclick="checkPassword()">Unlock →</button>
+    <div id="gate-error"></div>
+  </div>
+</div>
+
+<div id="app">
+<style>
+  :root { --bg:#0f1117;--bg2:#161820;--bg3:#1e2028;--border:#2a2d3a;--border2:#353849;--text:#e8eaf0;--text2:#9da3b8;--text3:#5c6280;--accent:#5b8def;--green:#4caf82;--amber:#e8a84c;--coral:#e0655a;--purple:#9b7fe8;--teal:#4db8a8;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--serif:'IBM Plex Serif',serif; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.75;}
+  header{border-bottom:1px solid var(--border);padding:3rem 4rem 2.5rem;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;}
+  .header-left .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
+  .header-left h1{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--text);line-height:1.2;}
+  .header-left .subtitle{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--text2);margin-top:.4rem;}
+  .header-meta{text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);line-height:2;}
+  .header-meta span{color:var(--text2);}
+  .version-badge{display:inline-block;background:rgba(76,175,130,.15);border:1px solid rgba(76,175,130,.3);color:var(--green);font-family:var(--mono);font-size:10px;padding:.2rem .6rem;border-radius:3px;margin-left:.5rem;vertical-align:middle;}
+  .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 120px);}
+  nav{border-right:1px solid var(--border);padding:2rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .nav-section{padding:0 1.5rem;margin-bottom:1.5rem;}
+  .nav-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem;}
+  nav a{display:block;font-size:13px;color:var(--text2);text-decoration:none;padding:.3rem 0;transition:color .15s;}
+  nav a:hover{color:var(--accent);}
+  nav a.active{color:var(--accent);font-weight:500;}
+  .nav-new{font-family:var(--mono);font-size:9px;background:rgba(76,175,130,.15);color:var(--green);border:1px solid rgba(76,175,130,.25);padding:.05rem .35rem;border-radius:2px;margin-left:.4rem;vertical-align:middle;}
+  main{padding:3rem 4rem;max-width:920px;}
+  section{margin-bottom:4rem;scroll-margin-top:2rem;}
+  .section-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+  .section-num{font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(91,141,239,.1);border:1px solid rgba(91,141,239,.2);padding:.2rem .6rem;border-radius:4px;flex-shrink:0;}
+  .section-new{font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.2);padding:.15rem .5rem;border-radius:4px;flex-shrink:0;}
+  h2{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--text);}
+  h3{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin:2rem 0 .75rem;}
+  p{color:var(--text2);margin-bottom:1rem;}
+  p strong{color:var(--text);font-weight:500;}
+  pre{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:1.25rem 1.5rem;font-family:var(--mono);font-size:12.5px;line-height:1.8;overflow-x:auto;margin:1rem 0 1.5rem;color:var(--text2);}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--bg2);border:1px solid var(--border);padding:.1rem .4rem;border-radius:3px;color:var(--teal);}
+  .kw{color:var(--purple);}.fn{color:var(--accent);}.str{color:var(--green);}.cm{color:var(--text3);font-style:italic;}.num{color:var(--amber);}
+  table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:13.5px;}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);text-align:left;padding:.6rem 1rem;border-bottom:1px solid var(--border2);}
+  td{padding:.7rem 1rem;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td strong{color:var(--text);}td code{font-size:11.5px;}
+  .badge{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:.15rem .55rem;border-radius:3px;font-weight:600;letter-spacing:.04em;}
+  .badge-green{background:rgba(76,175,130,.15);color:var(--green);border:1px solid rgba(76,175,130,.25);}
+  .badge-amber{background:rgba(232,168,76,.15);color:var(--amber);border:1px solid rgba(232,168,76,.25);}
+  .badge-coral{background:rgba(224,101,90,.15);color:var(--coral);border:1px solid rgba(224,101,90,.25);}
+  .badge-blue{background:rgba(91,141,239,.15);color:var(--accent);border:1px solid rgba(91,141,239,.25);}
+  .badge-teal{background:rgba(77,184,168,.15);color:var(--teal);border:1px solid rgba(77,184,168,.25);}
+  .callout{border-left:3px solid;padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1rem 0 1.5rem;font-size:14px;}
+  .callout p{margin:0;}
+  .callout-blue{border-color:var(--accent);background:rgba(91,141,239,.07);}
+  .callout-green{border-color:var(--green);background:rgba(76,175,130,.07);}
+  .callout-amber{border-color:var(--amber);background:rgba(232,168,76,.07);}
+  .callout-coral{border-color:var(--coral);background:rgba(224,101,90,.07);}
+  .callout-purple{border-color:var(--purple);background:rgba(155,127,232,.07);}
+  .flow{display:flex;align-items:center;gap:0;margin:1.25rem 0 1.75rem;flex-wrap:wrap;row-gap:.75rem;}
+  .flow-box{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:.6rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text);white-space:nowrap;}
+  .flow-box.blue{border-color:rgba(91,141,239,.4);background:rgba(91,141,239,.08);color:var(--accent);}
+  .flow-box.amber{border-color:rgba(232,168,76,.4);background:rgba(232,168,76,.08);color:var(--amber);}
+  .flow-box.coral{border-color:rgba(224,101,90,.4);background:rgba(224,101,90,.08);color:var(--coral);}
+  .flow-box.purple{border-color:rgba(155,127,232,.4);background:rgba(155,127,232,.08);color:var(--purple);}
+  .flow-arrow{color:var(--text3);font-size:16px;padding:0 .4rem;flex-shrink:0;}
+  .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1rem 0 1.5rem;}
+  .tier-card{border:1px solid var(--border2);border-radius:6px;padding:1rem;background:var(--bg2);}
+  .tier-card .tier-num{font-family:var(--mono);font-size:20px;font-weight:600;margin-bottom:.3rem;}
+  .tier-card .tier-label{font-size:12px;font-weight:500;color:var(--text);margin-bottom:.4rem;}
+  .tier-card .tier-desc{font-size:12px;color:var(--text3);line-height:1.5;}
+  .tier-card.t1{border-color:rgba(76,175,130,.4);}.tier-card.t1 .tier-num{color:var(--green);}
+  .tier-card.t2{border-color:rgba(77,184,168,.4);}.tier-card.t2 .tier-num{color:var(--teal);}
+  .tier-card.t3{border-color:rgba(232,168,76,.4);}.tier-card.t3 .tier-num{color:var(--amber);}
+  .tier-card.t4{border-color:rgba(224,101,90,.4);}.tier-card.t4 .tier-num{color:var(--coral);}
+  .output-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0 1.5rem;}
+  .output-card{border:1px solid var(--border2);border-radius:6px;padding:1.25rem;background:var(--bg2);}
+  .output-card h4{font-family:var(--mono);font-size:13px;font-weight:600;margin-bottom:.5rem;}
+  .output-card p{font-size:12.5px;color:var(--text3);margin-bottom:.75rem;}
+  .example{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:1.25rem 1.5rem;margin:1rem 0 1.5rem;font-size:13.5px;}
+  .example-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+  .example-row{display:flex;gap:1rem;margin-bottom:.3rem;align-items:baseline;}
+  .example-key{font-family:var(--mono);font-size:11.5px;color:var(--text3);width:180px;flex-shrink:0;}
+  .example-val{font-family:var(--mono);font-size:12px;color:var(--text);}
+  .example-val.hi{color:var(--green);}.example-val.mid{color:var(--amber);}
+  .formula{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:1rem 1.5rem;margin:1rem 0 1.5rem;font-family:var(--mono);font-size:14px;color:var(--text);text-align:center;letter-spacing:.03em;}
+  .formula .op{color:var(--text3);}.formula .var-blue{color:var(--accent);}.formula .var-teal{color:var(--teal);}.formula .var-amber{color:var(--amber);}.formula .var-coral{color:var(--coral);}.formula .result{color:var(--green);font-weight:600;}
+  .loop-diagram{display:flex;flex-direction:column;align-items:center;gap:0;margin:1.5rem auto;width:fit-content;}
+  .loop-step{border:1px solid var(--border2);border-radius:6px;padding:.7rem 2rem;font-family:var(--mono);font-size:12.5px;text-align:center;min-width:320px;background:var(--bg2);}
+  .loop-arrow-down{color:var(--text3);font-size:18px;line-height:1.4;}
+  .loop-note{font-size:11px;color:var(--text3);margin-top:.15rem;}
+  .cell-ref{display:inline-block;font-family:var(--mono);font-size:10.5px;background:rgba(155,127,232,.12);border:1px solid rgba(155,127,232,.25);color:var(--purple);padding:.1rem .45rem;border-radius:3px;margin-right:.3rem;}
+  .assumption-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin:1rem 0 1.5rem;}
+  .assumption-card{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:1rem 1.25rem;}
+  .assumption-card .ac-type{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:.4rem;}
+  .assumption-card .ac-formula{font-family:var(--mono);font-size:13px;color:var(--amber);margin-bottom:.5rem;}
+  .assumption-card .ac-example{font-size:12.5px;color:var(--text3);}
+  .assumption-card .ac-example span{color:var(--text2);}
+  .qa-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin:1rem 0 1.5rem;}
+  .qa-card{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:1rem 1.25rem;}
+  .qa-card .qa-id{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:.3rem;}
+  .qa-card .qa-val{font-family:var(--mono);font-size:18px;font-weight:600;margin-bottom:.2rem;}
+  .qa-card .qa-desc{font-size:12.5px;color:var(--text3);line-height:1.5;}
+  .qa-card.ok{border-color:rgba(76,175,130,.3);}.qa-card.ok .qa-val{color:var(--green);}
+  .qa-card.warn{border-color:rgba(232,168,76,.3);}.qa-card.warn .qa-val{color:var(--amber);}
+  .qa-card.info{border-color:rgba(91,141,239,.3);}.qa-card.info .qa-val{color:var(--accent);}
+  footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-family:var(--mono);font-size:11px;color:var(--text3);display:flex;justify-content:space-between;}
+  @media(max-width:768px){header{padding:2rem;flex-direction:column;align-items:flex-start;}.layout{grid-template-columns:1fr;}nav{display:none;}main{padding:2rem;}.tier-grid,.assumption-grid,.qa-grid{grid-template-columns:1fr;}.output-grid{grid-template-columns:1fr;}}
+</style>
 
 <header>
   <div class="header-left">
@@ -173,7 +156,6 @@
   <div class="header-meta">
     <div>Workspace <span>GHG BEX / Carbon Data dev</span></div>
     <div>Engine <span>PySpark (Python)</span></div>
-    <div>Fabric <span>Synapse Notebook</span></div>
     <div>Updated <span>March 2026</span></div>
   </div>
 </header>
@@ -219,14 +201,11 @@
 
 <main>
 
-<!-- ══════════════════════════════════ PURPOSE -->
 <section id="purpose">
   <div class="section-header"><span class="section-num">01</span><h2>Purpose</h2></div>
   <p>Script 3 is the <strong>core calculation engine</strong> of the GHG BEX platform. It takes raw event activity data and matches each row against the best available emission factor from <code>dmhistory</code>, then computes CO₂ equivalent emissions.</p>
-  <p>Two event streams are supported, controlled by a single flag in Cell 2:</p>
-  <pre><span class="kw">ENV</span> = <span class="str">"bex"</span>  <span class="cm"># BernExpo events → reads fcinbex, writes fcoutbex</span>
-<span class="kw">ENV</span> = <span class="str">"se"</span>   <span class="cm"># Sustainable Events (MuuvFestival, XaverAward…) → reads fcinse, writes fcoutse</span></pre>
-
+  <pre><span class="kw">ENV</span> = <span class="str">"bex"</span>  <span class="cm"># BernExpo → reads fcinbex, writes fcoutbex</span>
+<span class="kw">ENV</span> = <span class="str">"se"</span>   <span class="cm"># Sustainable Events → reads fcinse, writes fcoutse</span></pre>
   <h3>High-level flow</h3>
   <div class="flow">
     <div class="flow-box blue">fcinbex / fcinse</div><div class="flow-arrow">→</div>
@@ -236,645 +215,320 @@
     <div class="flow-box amber">Calculate CO₂</div><div class="flow-arrow">→</div>
     <div class="flow-box coral">fcoutbex / fcoutse</div>
   </div>
-  <div class="callout callout-blue">
-    <p><strong>Key design principle:</strong> Every input row receives exactly one output row. Rows with no DM match (NoMatch / orphans) still appear in the output with null CO₂, so they are visible in QA for manual follow-up.</p>
-  </div>
+  <div class="callout callout-blue"><p><strong>Key design principle:</strong> Every input row receives exactly one output row. Orphans appear with null CO₂ — visible in QA for follow-up.</p></div>
 </section>
 
-<!-- ══════════════════════════════════ INPUTS -->
 <section id="inputs">
   <div class="section-header"><span class="section-num">02</span><h2>Inputs</h2></div>
-
-  <h3>FCIn table — event activity data</h3>
+  <h3>FCIn table</h3>
   <table>
     <thead><tr><th>Column</th><th>Description</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><code>ActivitySource</code></td><td>Category of activity</td><td><strong>food</strong>, mobility, energy, transaction, articles</td></tr>
-      <tr><td><code>ActivityID</code></td><td>Unique item ID. Empty for many food/articles rows.</td><td><strong>105004025</strong>, "" (empty)</td></tr>
-      <tr><td><code>ActivityEN</code></td><td>English activity name. Becomes the key when ActivityID is empty.</td><td><strong>entrecôte</strong>, security / guarding</td></tr>
-      <tr><td><code>Qty</code></td><td>Raw quantity from event</td><td><strong>125</strong> portions, <strong>2</strong> unitday</td></tr>
-      <tr><td><code>QtyUnit</code></td><td>Unit of Qty</td><td>pkm, kwh, day, <strong>unitday</strong>, CHF</td></tr>
-      <tr><td><code>Context</code></td><td>Event identifier</td><td><strong>bernexpo</strong>, muuvfestival, <strong>xaveraward</strong></td></tr>
-      <tr><td><code>ContextDate</code></td><td>Event year</td><td><strong>2025</strong></td></tr>
-      <tr><td><code>Status</code></td><td>"Excl." rows are dropped before matching</td><td><strong>IN</strong>, Excl.</td></tr>
-      <tr><td><code>ActivityPopulation</code></td><td>Audience segment</td><td><strong>B2B</strong>, B2C</td></tr>
-      <tr><td><code>ActivityConfidenceLevel</code></td><td>Data quality assessment</td><td><strong>High</strong>, Medium, Low</td></tr>
+      <tr><td><code>ActivitySource</code></td><td>Category</td><td>food, mobility, energy, articles</td></tr>
+      <tr><td><code>ActivityID</code></td><td>Unique item ID. Empty for many rows.</td><td>105004025, ""</td></tr>
+      <tr><td><code>ActivityEN</code></td><td>English name. Key when ActivityID empty.</td><td>entrecôte, security / guarding</td></tr>
+      <tr><td><code>Qty</code></td><td>Raw quantity</td><td>125 portions, 2 unitday</td></tr>
+      <tr><td><code>QtyUnit</code></td><td>Unit of Qty</td><td>pkm, kwh, unitday, CHF</td></tr>
+      <tr><td><code>Context</code></td><td>Event identifier</td><td>bernexpo, muuvfestival</td></tr>
+      <tr><td><code>ContextDate</code></td><td>Event year</td><td>2025</td></tr>
+      <tr><td><code>Status</code></td><td>"Excl." rows dropped before matching</td><td>IN, Excl.</td></tr>
     </tbody>
   </table>
-
-  <h3>DMHistory table — emission factors reference</h3>
+  <h3>DMHistory table</h3>
   <table>
     <thead><tr><th>Column</th><th>Description</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><code>ActivitySource</code></td><td>Must match FCIn exactly (after normalization)</td><td><strong>food</strong>, articles</td></tr>
-      <tr><td><code>ActivityID</code></td><td>Must match FCIn</td><td><strong>105004025</strong>, "" (empty)</td></tr>
-      <tr><td><code>ActivityEN</code></td><td>Must match FCIn exactly (after normalization)</td><td><strong>entrecôte</strong>, security / guarding</td></tr>
-      <tr><td><code>AssumptionValue</code></td><td>Conversion factor: how many physical units per event unit</td><td><strong>0.2</strong> (kg/portion), <strong>1</strong> (day/unitday), <strong>0.002</strong> (day/CHF)</td></tr>
-      <tr><td><code>AssumptionUnit</code></td><td>Unit of assumption. Denominator must cancel QtyUnit.</td><td><strong>kg</strong>, day/unitday, day/chf, kwh/chf</td></tr>
-      <tr><td><code>EMFAID</code></td><td>Reference to emission factor in the EF library</td><td><strong>oth25-12032-security services</strong></td></tr>
-      <tr><td><code>EmissionFactor</code></td><td>kgCO₂e per physical unit (populated from EMFAID)</td><td><strong>6</strong> kgCO₂e/day, <strong>29.1043</strong> kgCO₂e/kg</td></tr>
-      <tr><td><code>Context</code></td><td>Event this DM was built for</td><td><strong>bernexpo</strong>, xaveraward</td></tr>
-      <tr><td><code>ContextDate</code></td><td>Year this DM applies to</td><td><strong>2025</strong></td></tr>
-      <tr><td><code>DMStatus</code></td><td>Lifecycle. "legacy"/"history" rows excluded from matching.</td><td><strong>active</strong>, new, history</td></tr>
-      <tr><td><code>DMImportDate</code></td><td>Import timestamp. Used as tiebreaker.</td><td><strong>2026-03-13 09:20</strong></td></tr>
+      <tr><td><code>AssumptionValue</code></td><td>Conversion factor</td><td>0.2 (kg/portion), 1 (day/unitday)</td></tr>
+      <tr><td><code>AssumptionUnit</code></td><td>Denominator must cancel QtyUnit</td><td>kg, day/unitday, day/chf</td></tr>
+      <tr><td><code>EMFAID</code></td><td>Reference to EF library</td><td>oth25-12032-security services</td></tr>
+      <tr><td><code>EmissionFactor</code></td><td>kgCO₂e per physical unit</td><td>6 kgCO₂e/day, 29.1043 kgCO₂e/kg</td></tr>
+      <tr><td><code>Context / ContextDate</code></td><td>Event + year this DM applies to</td><td>bernexpo / 2025</td></tr>
+      <tr><td><code>DMStatus</code></td><td>"legacy"/"history" excluded from matching</td><td>active, new, history</td></tr>
+      <tr><td><code>DMImportDate</code></td><td>Import timestamp. Used as tiebreaker.</td><td>2026-03-13 09:20</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ══════════════════════════════════ OUTPUTS -->
 <section id="outputs">
   <div class="section-header"><span class="section-num">03</span><h2>Outputs</h2></div>
   <div class="output-grid">
-    <div class="output-card">
-      <h4 style="color:var(--coral)">fcoutbex / fcoutse</h4>
-      <p>Main output. One row per FCIn row. Overwritten on each run.</p>
-      <span class="badge badge-coral">Overwrite</span>
-    </div>
-    <div class="output-card">
-      <h4 style="color:var(--amber)">bkfcout</h4>
-      <p>Backup / audit trail. Appended on each run with a timestamp label.</p>
-      <span class="badge badge-amber">Append</span>
-    </div>
-    <div class="output-card">
-      <h4 style="color:var(--teal)">Console QA</h4>
-      <p>Printed diagnostics: row counts, orphans, duplicates, CO₂ coverage, tier distribution.</p>
-      <span class="badge badge-teal">Print only</span>
-    </div>
+    <div class="output-card"><h4 style="color:var(--coral)">fcoutbex / fcoutse</h4><p>Main output. One row per FCIn row. Overwritten on each run.</p><span class="badge badge-coral">Overwrite</span></div>
+    <div class="output-card"><h4 style="color:var(--amber)">bkfcout</h4><p>Backup / audit trail. Appended on each run with timestamp label.</p><span class="badge badge-amber">Append</span></div>
+    <div class="output-card"><h4 style="color:var(--teal)">Console QA</h4><p>Printed diagnostics: row counts, orphans, duplicates, CO₂ coverage, tiers.</p><span class="badge badge-teal">Print only</span></div>
   </div>
-
-  <h3>Key columns added to the output</h3>
   <table>
     <thead><tr><th>Column</th><th>Source</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><code>QtyTot</code></td><td>Calculated</td><td>Qty × AssumptionValue. Physical total quantity. Null if AssumptionValue is null.</td></tr>
-      <tr><td><code>QtyTotUnit</code></td><td>Calculated</td><td>Resulting unit after denominator cancellation.</td></tr>
-      <tr><td><code>EmissionsKgCO2eq</code></td><td>Calculated</td><td>QtyTot × EmissionFactor. The final CO₂ number.</td></tr>
-      <tr><td><code>ChosenTier</code></td><td>Matching</td><td>1–4. Which tier produced the match. Key for QA.</td></tr>
-      <tr><td><code>Population</code></td><td>Enrichment</td><td>DMPopulation if set, else ActivityPopulation.</td></tr>
-      <tr><td><code>ConfidenceLevel</code></td><td>Enrichment</td><td>Combined DM + Activity score: "1 - High" to "5 - Low".</td></tr>
-      <tr><td><code>CATID</code></td><td>Enrichment</td><td>IDCatSTR3 + population suffix for mobility rows.</td></tr>
-      <tr><td><code>ImportDate</code></td><td>Timestamp</td><td>When this script run completed.</td></tr>
+      <tr><td><code>QtyTot</code></td><td>Calculated</td><td>Qty × AssumptionValue</td></tr>
+      <tr><td><code>EmissionsKgCO2eq</code></td><td>Calculated</td><td>QtyTot × EmissionFactor</td></tr>
+      <tr><td><code>ChosenTier</code></td><td>Matching</td><td>1–4. Which tier produced the match.</td></tr>
+      <tr><td><code>Population</code></td><td>Enrichment</td><td>DMPopulation if set, else ActivityPopulation</td></tr>
+      <tr><td><code>ConfidenceLevel</code></td><td>Enrichment</td><td>"1 - High" to "5 - Low"</td></tr>
+      <tr><td><code>CATID</code></td><td>Enrichment</td><td>IDCatSTR3 + population suffix for mobility</td></tr>
+      <tr><td><code>ImportDate</code></td><td>Timestamp</td><td>When this run completed</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ══════════════════════════════════ EXCLUSIONS -->
 <section id="exclusions">
   <div class="section-header"><span class="section-num">04</span><h2>Exclusions</h2></div>
-  <p>Before matching, both tables are filtered.</p>
-
-  <h3>FCIn exclusions <span class="cell-ref">Cell 6</span></h3>
   <table>
     <thead><tr><th>Flag</th><th>Condition</th><th>Effect</th></tr></thead>
     <tbody>
       <tr><td><code>EXCLUDE_FC_STATUS_EXCL = True</code></td><td>Status = "Excl."</td><td>Row dropped entirely</td></tr>
-      <tr><td><code>EXCLUDE_FC_LOCATION = False</code></td><td>ActivityEN = "location"</td><td>Disabled — locations kept (used for distance calc)</td></tr>
+      <tr><td><code>EXCLUDE_FC_LOCATION = False</code></td><td>ActivityEN = "location"</td><td>Disabled — locations kept</td></tr>
+      <tr><td><code>EXCLUDE_DM_LEGACY = True</code></td><td>DMStatus = "legacy" or "history"</td><td>Excluded from matching</td></tr>
     </tbody>
   </table>
-
-  <h3>DMHistory exclusions <span class="cell-ref">Cell 6</span></h3>
-  <table>
-    <thead><tr><th>Flag</th><th>Condition</th><th>Effect</th></tr></thead>
-    <tbody>
-      <tr><td><code>EXCLUDE_DM_LEGACY = True</code></td><td>DMStatus = "legacy" or "history"</td><td>Excluded from matching (kept for audit only)</td></tr>
-    </tbody>
-  </table>
-  <div class="callout callout-amber">
-    <p>Example: <em>petite arvine wine</em> row has DMStatus = "history" → excluded. The <strong>DMHistory1</strong> source in the Power Query combine always tags old snapshot rows as "History" — this is how the system keeps audit history without polluting the active matching pool.</p>
-  </div>
 </section>
 
-<!-- ══════════════════════════════════ NORMALIZATION -->
 <section id="normalization">
   <div class="section-header"><span class="section-num">05</span><h2>Key normalization</h2></div>
-  <p>Before joining, all key columns are normalized on both tables so minor formatting differences don't cause NoMatch. <span class="cell-ref">Cell 5</span></p>
   <pre><span class="cm"># Applied to: ActivitySource, ActivityEN, ActivityID, Context</span>
-<span class="num">1.</span> lowercase("Security / Guarding") → <span class="str">"security / guarding"</span>
-<span class="num">2.</span> trim("  articles  ")            → <span class="str">"articles"</span>
-<span class="num">3.</span> non-breaking space → regular space
-<span class="num">4.</span> collapse multiple spaces        → <span class="str">"chair: without armrest black"</span>  <span class="cm"># double → single</span>
-<span class="num">5.</span> ContextDate cast to integer      → <span class="num">2025</span></pre>
-
-  <div class="callout callout-amber">
-    <p><strong>The double-space bug:</strong> If DMInput has "chair: without armrest  black" (2 spaces) AND "chair: without armrest black" (1 space), normalization makes them identical → C3 duplicate. Clean source data in SharePoint to remove extra spaces.</p>
-  </div>
-
-  <h3>Shadow keys (_k columns)</h3>
-  <p>Normalized versions stored in <code>_k</code> columns used only for the join. Originals are preserved and appear in the output. The <code>_k</code> columns are stripped before writing to fcout.</p>
-  <pre>ActivitySource  →  ActivitySource_k
-ActivityID      →  ActivityID_k
-ActivityEN      →  ActivityEN_k   <span class="cm"># these are never in the output</span></pre>
+lowercase · trim · non-breaking space → regular · collapse multiple spaces · ContextDate → int</pre>
+  <div class="callout callout-amber"><p><strong>The double-space bug:</strong> "chair:  without armrest  black" → after normalization becomes identical to the 1-space version → C3 duplicate. Clean source data in SharePoint.</p></div>
 </section>
 
-<!-- ══════════════════════════════════ MATCHING -->
 <section id="matching">
   <div class="section-header"><span class="section-num">06</span><h2>Tiered matching</h2></div>
-  <p>For each FCIn row, the script finds the <strong>single best DM row</strong> using a 4-tier priority system. The foundation is always the 3 join keys — tiers only apply once the keys already match.</p>
-
-  <h3>The 3 join keys (mandatory for any match)</h3>
-  <div class="callout callout-purple">
-    <p>All three must match simultaneously. There is no way to match on ActivitySource alone — the full combination is required to identify a unique activity.</p>
-  </div>
-  <pre><span class="fn">join_keys</span> = [<span class="str">"ActivitySource"</span>, <span class="str">"ActivityID"</span>, <span class="str">"ActivityEN"</span>]
-
-<span class="cm"># When ActivityID is filled:</span>
-fcinse:     articles + 150 + "chair: without armrest black"
-dmhistory:  articles + 150 + "chair: without armrest black"  → MATCH ✓
-
-<span class="cm"># When ActivityID is empty → ActivityEN is the sole identifier:</span>
-fcinse:     articles + "" + "security / guarding"
-dmhistory:  articles + "" + "security / guarding"  → MATCH ✓
-dmhistory:  articles + "" + "security"             → NO MATCH ✗  <span class="cm"># not exact</span></pre>
-
-  <h3>Tier priority — once keys match</h3>
+  <pre><span class="fn">join_keys</span> = [<span class="str">"ActivitySource"</span>, <span class="str">"ActivityID"</span>, <span class="str">"ActivityEN"</span>]</pre>
   <div class="tier-grid">
-    <div class="tier-card t1">
-      <div class="tier-num">T1</div>
-      <div class="tier-label">Perfect match</div>
-      <div class="tier-desc">Same keys + same Context + same ContextDate. Best possible.</div>
-    </div>
-    <div class="tier-card t2">
-      <div class="tier-num">T2</div>
-      <div class="tier-label">Year match</div>
-      <div class="tier-desc">Same keys + same ContextDate, any Context.</div>
-    </div>
-    <div class="tier-card t3">
-      <div class="tier-num">T3</div>
-      <div class="tier-label">Context match</div>
-      <div class="tier-desc">Same keys + same Context, any year. Tiebreak: most recent ContextDate_dm.</div>
-    </div>
-    <div class="tier-card t4">
-      <div class="tier-num">T4</div>
-      <div class="tier-label">Fallback</div>
-      <div class="tier-desc">Same keys only. Any context, any year. Also used for location rows (no EF needed).</div>
-    </div>
+    <div class="tier-card t1"><div class="tier-num">T1</div><div class="tier-label">Perfect</div><div class="tier-desc">Keys + same Context + same ContextDate</div></div>
+    <div class="tier-card t2"><div class="tier-num">T2</div><div class="tier-label">Year match</div><div class="tier-desc">Keys + same ContextDate, any Context</div></div>
+    <div class="tier-card t3"><div class="tier-num">T3</div><div class="tier-label">Context match</div><div class="tier-desc">Keys + same Context, any year</div></div>
+    <div class="tier-card t4"><div class="tier-num">T4</div><div class="tier-label">Fallback</div><div class="tier-desc">Keys only. Any context, any year.</div></div>
   </div>
-
-  <h3>Tiebreak rules — when multiple rows share the same tier</h3>
+  <h3>Tiebreak</h3>
   <table>
-    <thead><tr><th>Priority</th><th>Applies to</th><th>Rule</th></tr></thead>
+    <thead><tr><th>Priority</th><th>Rule</th></tr></thead>
     <tbody>
-      <tr><td>1st</td><td>Tier 3 only</td><td>Most recent <code>ContextDate_dm</code> descending</td></tr>
-      <tr><td>2nd</td><td>All tiers</td><td>Most recent <code>DMImportDate</code> descending</td></tr>
-      <tr><td>3rd</td><td>All tiers</td><td>SHA256 hash (deterministic, always picks same row)</td></tr>
+      <tr><td>1st (T3 only)</td><td>Most recent ContextDate_dm</td></tr>
+      <tr><td>2nd (all)</td><td>Most recent DMImportDate</td></tr>
+      <tr><td>3rd (all)</td><td>SHA256 hash — deterministic</td></tr>
     </tbody>
   </table>
-
-  <h3>Real example — entrecôte at MuuvFestival 2025</h3>
   <div class="example">
-    <div class="example-label" style="color:var(--accent)">FCIn row</div>
-    <div class="example-row"><span class="example-key">ActivitySource</span><span class="example-val">food</span></div>
-    <div class="example-row"><span class="example-key">ActivityID</span><span class="example-val">105004025</span></div>
-    <div class="example-row"><span class="example-key">ActivityEN</span><span class="example-val">entrecôte</span></div>
-    <div class="example-row"><span class="example-key">Context</span><span class="example-val">bernexpo</span></div>
-    <div class="example-row"><span class="example-key">ContextDate</span><span class="example-val">2025</span></div>
-  </div>
-  <div class="example">
-    <div class="example-label" style="color:var(--teal)">DM candidates (all have same 3 keys)</div>
-    <div class="example-row"><span class="example-key">Row A: 2024</span><span class="example-val mid">Context=bernexpo ✓  Year=2024 ✗  →  Tier 3</span></div>
-    <div class="example-row"><span class="example-key">Row B: 2025</span><span class="example-val hi">Context=bernexpo ✓  Year=2025 ✓  →  Tier 1 ★ SELECTED</span></div>
-    <div class="example-row"><span class="example-key">Row C: 2026</span><span class="example-val mid">Context=bernexpo ✓  Year=2026 ✗  →  Tier 3</span></div>
-  </div>
-
-  <div class="callout callout-coral">
-    <p><strong>NoMatch (Orphan):</strong> If no DM row has matching keys at all, the FCIn row still appears in fcoutse but with <code>EmissionsKgCO2eq = null</code>. It shows up in QA check B4. Fix: add the missing row to DMInput in SharePoint, rebuild DMHistory, re-run.</p>
+    <div class="example-label" style="color:var(--teal)">entrecôte — bernexpo 2025</div>
+    <div class="example-row"><span class="example-key">Row A: 2024</span><span class="example-val mid">Tier 3</span></div>
+    <div class="example-row"><span class="example-key">Row B: 2025</span><span class="example-val hi">Tier 1 ★ SELECTED</span></div>
+    <div class="example-row"><span class="example-key">Row C: 2026</span><span class="example-val mid">Tier 3</span></div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════ CALCULATION -->
 <section id="calculation">
   <div class="section-header"><span class="section-num">07</span><h2>CO₂ calculation</h2></div>
-
-  <h3>Step 1 — QtyTot</h3>
-  <div class="formula">
-    <span class="var-blue">QtyTot</span><span class="op"> = </span><span class="var-teal">Qty</span><span class="op"> × </span><span class="var-amber">AssumptionValue_dm</span>
-  </div>
-  <div class="callout callout-amber">
-    <p><strong>AssumptionValue must never be null.</strong> If it is null, QtyTot = null and EmissionsKgCO2eq = null. Always set at minimum AssumptionValue = 1 if no real conversion is needed.</p>
-  </div>
-
-  <h3>Step 2 — EmissionsKgCO2eq</h3>
-  <div class="formula">
-    <span class="var-coral">EmissionsKgCO2eq</span><span class="op"> = </span><span class="var-blue">QtyTot</span><span class="op"> × </span><span class="var-teal">EmissionFactor_dm</span>
-  </div>
-
-  <h3>Real examples</h3>
+  <div class="formula"><span class="var-blue">QtyTot</span><span class="op"> = </span><span class="var-teal">Qty</span><span class="op"> × </span><span class="var-amber">AssumptionValue</span></div>
+  <div class="formula"><span class="var-coral">EmissionsKgCO2eq</span><span class="op"> = </span><span class="var-blue">QtyTot</span><span class="op"> × </span><span class="var-teal">EmissionFactor</span></div>
   <div class="example">
-    <div class="example-label" style="color:var(--amber)">Example A — entrecôte (food, kg-based)</div>
-    <div class="example-row"><span class="example-key">Qty (fcinse)</span><span class="example-val">125 portions</span></div>
-    <div class="example-row"><span class="example-key">AssumptionValue</span><span class="example-val">0.2  (kg per portion)</span></div>
-    <div class="example-row"><span class="example-key">QtyTot</span><span class="example-val">125 × 0.2 = 25 kg</span></div>
-    <div class="example-row"><span class="example-key">EmissionFactor</span><span class="example-val">29.1043 kgCO₂e/kg</span></div>
-    <div class="example-row"><span class="example-key">EmissionsKgCO2eq</span><span class="example-val hi">25 × 29.1043 = 727.6 kgCO₂e</span></div>
+    <div class="example-label" style="color:var(--amber)">entrecôte — 125 portions → 727.6 kgCO₂e</div>
+    <div class="example-row"><span class="example-key">125 portions × 0.2 kg</span><span class="example-val">= 25 kg</span></div>
+    <div class="example-row"><span class="example-key">25 kg × 29.1043</span><span class="example-val hi">= 727.6 kgCO₂e</span></div>
   </div>
   <div class="example">
-    <div class="example-label" style="color:var(--teal)">Example B — security / guarding (articles, unitday-based)</div>
-    <div class="example-row"><span class="example-key">Qty (fcinse)</span><span class="example-val">2 unitday</span></div>
-    <div class="example-row"><span class="example-key">AssumptionValue</span><span class="example-val">1  (1 unitday = 1 day)</span></div>
-    <div class="example-row"><span class="example-key">QtyTot</span><span class="example-val">2 × 1 = 2 days</span></div>
-    <div class="example-row"><span class="example-key">EmissionFactor</span><span class="example-val">6 kgCO₂e/day (oth25-12032)</span></div>
-    <div class="example-row"><span class="example-key">EmissionsKgCO2eq</span><span class="example-val hi">2 × 6 = 12 kgCO₂e</span></div>
+    <div class="example-label" style="color:var(--teal)">security — 2 unitday → 12 kgCO₂e</div>
+    <div class="example-row"><span class="example-key">2 unitday × 1 day/unitday</span><span class="example-val">= 2 days</span></div>
+    <div class="example-row"><span class="example-key">2 days × 6 kgCO₂e/day</span><span class="example-val hi">= 12 kgCO₂e</span></div>
   </div>
-  <div class="example">
-    <div class="example-label" style="color:var(--purple)">Example C — external security (transaction, CHF-based)</div>
-    <div class="example-row"><span class="example-key">Qty (fcinse)</span><span class="example-val">500 CHF  (rate: 500 CHF/day)</span></div>
-    <div class="example-row"><span class="example-key">AssumptionValue</span><span class="example-val">0.002  (1/500 = 0.002 days per CHF)</span></div>
-    <div class="example-row"><span class="example-key">QtyTot</span><span class="example-val">500 × 0.002 = 1 day</span></div>
-    <div class="example-row"><span class="example-key">EmissionFactor</span><span class="example-val">6 kgCO₂e/day (oth25-12032)</span></div>
-    <div class="example-row"><span class="example-key">EmissionsKgCO2eq</span><span class="example-val hi">1 × 6 = 6 kgCO₂e</span></div>
-  </div>
-
-  <h3>Step 3 — QtyTotUnit (denominator cancellation)</h3>
   <table>
-    <thead><tr><th>QtyUnit</th><th>AssumptionUnit</th><th>Result</th><th>Rule</th></tr></thead>
+    <thead><tr><th>QtyUnit</th><th>AssumptionUnit</th><th>Result</th></tr></thead>
     <tbody>
-      <tr><td>(empty)</td><td>kg</td><td><strong>kg</strong></td><td>No QtyUnit → use AssumptionUnit</td></tr>
-      <tr><td>unitday</td><td>day/unitday</td><td><strong>day</strong></td><td>unitday cancels → keeps "day"</td></tr>
-      <tr><td>CHF</td><td>day/CHF</td><td><strong>day</strong></td><td>CHF cancels → keeps numerator "day"</td></tr>
-      <tr><td>pkm</td><td>(empty)</td><td><strong>pkm</strong></td><td>No AssumptionUnit → keep QtyUnit</td></tr>
-      <tr><td>kwh</td><td>kwh</td><td><strong>kwh</strong></td><td>Same on both sides → keep once</td></tr>
-      <tr><td>chf</td><td>kwh/chf</td><td><strong>kwh</strong></td><td>chf cancels → keeps kwh</td></tr>
+      <tr><td>(empty)</td><td>kg</td><td><strong>kg</strong></td></tr>
+      <tr><td>unitday</td><td>day/unitday</td><td><strong>day</strong></td></tr>
+      <tr><td>CHF</td><td>day/CHF</td><td><strong>day</strong></td></tr>
+      <tr><td>pkm</td><td>(empty)</td><td><strong>pkm</strong></td></tr>
+      <tr><td>kwh</td><td>kwh</td><td><strong>kwh</strong></td></tr>
+      <tr><td>chf</td><td>kwh/chf</td><td><strong>kwh</strong></td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ══════════════════════════════════ ENRICHMENT -->
 <section id="enrichment">
-  <div class="section-header"><span class="section-num">08</span><h2>Post-calculation enrichment</h2></div>
+  <div class="section-header"><span class="section-num">08</span><h2>Enrichment</h2></div>
+  <pre><span class="cm"># Population</span>
+DMPopulation → ActivityPopulation → null  <span class="cm">("0","NULL" = empty)</span>
 
-  <h3>Population <span class="cell-ref">Cell 15</span></h3>
-  <pre><span class="kw">if</span> DMPopulation not empty   → Population = DMPopulation    <span class="cm"># DM wins</span>
-<span class="kw">elif</span> ActivityPopulation not empty → Population = ActivityPopulation
-<span class="kw">else</span> → Population = null
-<span class="cm"># "0", "0.0", "NULL" treated as empty</span></pre>
-
-  <h3>ConfidenceLevel <span class="cell-ref">Cell 16</span></h3>
-  <table>
-    <thead><tr><th>DM</th><th>Activity</th><th>Result</th></tr></thead>
-    <tbody>
-      <tr><td>high</td><td>high</td><td><span class="badge badge-green">1 - High</span></td></tr>
-      <tr><td>high</td><td>medium</td><td><span class="badge badge-teal">2 - Medium+</span></td></tr>
-      <tr><td>high</td><td>low</td><td><span class="badge badge-blue">3 - Medium</span></td></tr>
-      <tr><td>medium</td><td>high</td><td><span class="badge badge-teal">2 - Medium+</span></td></tr>
-      <tr><td>medium</td><td>medium</td><td><span class="badge badge-blue">3 - Medium</span></td></tr>
-      <tr><td>low</td><td>low</td><td><span class="badge badge-coral">5 - Low</span></td></tr>
-    </tbody>
-  </table>
-
-  <h3>CATID <span class="cell-ref">Cell 17</span></h3>
-  <pre><span class="cm"># Non-mobility: CATID = IDCatSTR3 unchanged</span>
-<span class="cm"># Mobility (passengers): population is appended</span>
-IDCatSTR3  = <span class="str">"mobility (passengers) / road / car"</span>
-Population = <span class="str">"b2c"</span>
-CATID      = <span class="str">"mobility (passengers) / road / car - b2c"</span></pre>
+<span class="cm"># CATID — mobility only</span>
+<span class="str">"mobility (passengers) / road / car"</span> + <span class="str">"b2c"</span> → <span class="str">"mobility (passengers) / road / car - b2c"</span></pre>
 </section>
 
-<!-- ══════════════════════════════════ DMHISTORY BUILD -->
 <section id="dmhistory">
-  <div class="section-header"><span class="section-num">09</span><h2>How DMHistory is built</h2></div>
-  <p>DMHistory is rebuilt by a Power Query workflow before each script run, combining 4 sources:</p>
+  <div class="section-header"><span class="section-num">09</span><h2>DMHistory build</h2></div>
   <pre><span class="fn">Table.Combine</span>({DMFCSeOut, DMFCBexOut, DMInput, DMHistory1})</pre>
-
   <table>
-    <thead><tr><th>Source</th><th>Origin</th><th>DMStatus</th><th>Purpose</th></tr></thead>
+    <thead><tr><th>Source</th><th>DMStatus</th><th>Purpose</th></tr></thead>
     <tbody>
-      <tr><td><strong>DMInput</strong></td><td>SharePoint (manual)</td><td><span class="badge badge-blue">new / active</span></td><td>Human-curated factors. The ground truth. You add rows here for new events.</td></tr>
-      <tr><td><strong>DMFCSeOut</strong></td><td>Previous fcoutse (lakehouse)</td><td><span class="badge badge-green">Active</span></td><td>Past SE outputs fed back. Deduped. Enables Tier 1 for recurring events.</td></tr>
-      <tr><td><strong>DMFCBexOut</strong></td><td>Previous fcoutbex (lakehouse)</td><td><span class="badge badge-green">Active</span></td><td>Same for BEX stream.</td></tr>
-      <tr><td><strong>DMHistory1</strong></td><td>Previous dmhistory snapshot</td><td><span class="badge badge-amber">History</span></td><td>Old snapshot for audit. Tagged History → excluded from matching.</td></tr>
+      <tr><td><strong>DMInput</strong></td><td><span class="badge badge-blue">new / active</span></td><td>Human-curated. Ground truth.</td></tr>
+      <tr><td><strong>DMFCSeOut</strong></td><td><span class="badge badge-green">Active</span></td><td>Past SE outputs. Enables Tier 1 for recurring events.</td></tr>
+      <tr><td><strong>DMFCBexOut</strong></td><td><span class="badge badge-green">Active</span></td><td>Same for BEX stream.</td></tr>
+      <tr><td><strong>DMHistory1</strong></td><td><span class="badge badge-amber">History</span></td><td>Old snapshot. Audit only. Excluded from matching.</td></tr>
     </tbody>
   </table>
-  <div class="callout callout-amber">
-    <p><strong>Why DMHistory1 is tagged "History":</strong> DMFCSeOut and DMFCBexOut already have the active validated versions. The old snapshot is kept for traceability but must not compete with current active rows in the tier system.</p>
-  </div>
 </section>
 
-<!-- ══════════════════════════════════ SELF-LEARNING -->
 <section id="selflearning">
   <div class="section-header"><span class="section-num">10</span><h2>Self-learning loop</h2></div>
-  <p>The system improves automatically. Each run's output feeds back into DMHistory, enriching future runs.</p>
-
   <div class="loop-diagram">
-    <div class="loop-step" style="border-color:rgba(91,141,239,.4);color:var(--accent)">New event data loaded into fcinse</div>
+    <div class="loop-step" style="border-color:rgba(91,141,239,.4);color:var(--accent)">New event data → fcinse</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(155,127,232,.4);color:var(--purple)">
-      Script 3 matches + calculates CO₂
-      <div class="loop-note">First run for new event: mostly Tier 3/4 (borrowing from other contexts)</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(155,127,232,.4);color:var(--purple)">Script 3 run<div class="loop-note">First run: mostly Tier 3/4</div></div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(224,101,90,.4);color:var(--coral)">fcoutse written to lakehouse</div>
+    <div class="loop-step" style="border-color:rgba(224,101,90,.4);color:var(--coral)">fcoutse written</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(232,168,76,.4);color:var(--amber)">
-      Power Query rebuilds DMHistory
-      <div class="loop-note">fcoutse → DMFCSeOut (Active) + old DMHistory → DMHistory1 (History)</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(232,168,76,.4);color:var(--amber)">Power Query rebuilds DMHistory</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(76,175,130,.4);color:var(--green)">
-      Next run of same event → Tier 1 matches available ★
-      <div class="loop-note">Context + ContextDate now exist in DMHistory → perfect match</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(76,175,130,.4);color:var(--green)">Next run → Tier 1 available ★</div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════ JOIN KEYS -->
 <section id="joinkeys">
   <div class="section-header"><span class="section-num">11</span><h2>Join keys — practical guide</h2></div>
-
   <table>
-    <thead><tr><th>Scenario</th><th>What drives the match</th><th>Risk</th></tr></thead>
+    <thead><tr><th>Scenario</th><th>Risk</th></tr></thead>
     <tbody>
-      <tr><td>ActivityID filled (e.g. <code>105004025</code>)</td><td>ActivityID is the real key. ActivityEN must also match.</td><td><span class="badge badge-green">Low</span> — stable ID</td></tr>
-      <tr><td>ActivityID empty (most food, many articles)</td><td>ActivityEN is the sole identifier. Must match character-for-character after normalization.</td><td><span class="badge badge-amber">Medium</span> — typos cause NoMatch</td></tr>
-      <tr><td>Both empty</td><td>ActivityEN alone. Very fragile.</td><td><span class="badge badge-coral">High</span> — avoid</td></tr>
+      <tr><td>ActivityID filled</td><td><span class="badge badge-green">Low</span> — stable ID</td></tr>
+      <tr><td>ActivityID empty</td><td><span class="badge badge-amber">Medium</span> — typos cause NoMatch</td></tr>
+      <tr><td>Both empty</td><td><span class="badge badge-coral">High</span> — avoid</td></tr>
     </tbody>
   </table>
-
-  <h3>Fixing a NoMatch</h3>
-  <pre><span class="cm"># FCIn has a row with no key match in DMHistory:</span>
-fcinse:   articles + <span class="str">""</span> + <span class="str">"security / guarding"</span>
-
-<span class="cm"># Solution: add to DMInput in SharePoint with EXACTLY same values:</span>
-DMInput:  articles + <span class="str">""</span> + <span class="str">"security / guarding"</span>
-          + AssumptionValue=<span class="num">1</span> + AssumptionUnit=<span class="str">"day/unitday"</span>
-          + EMFAID=<span class="str">"oth25-12032-security services"</span>
-          + Context=<span class="str">"xaveraward"</span> + ContextDate=<span class="num">2025</span>
-
-<span class="cm"># Then: Power Query → DMHistory rebuilt → re-run Script 3 → Tier 1 match ✓</span></pre>
+  <pre><span class="cm"># Fix NoMatch: add to DMInput with EXACT same ActivityEN</span>
+articles + <span class="str">""</span> + <span class="str">"security / guarding"</span> + AssumptionValue=<span class="num">1</span> + Context=<span class="str">"xaveraward"</span> + ContextDate=<span class="num">2025</span>
+<span class="cm"># → rebuild DMHistory → re-run → Tier 1 ✓</span></pre>
 </section>
 
-<!-- ══════════════════════════════════ NEW EVENT GUIDE -->
 <section id="newevent">
-  <div class="section-header"><span class="section-num">12</span><h2>Adding a new event — step by step</h2><span class="section-new">NEW</span></div>
-  <p>When you have a new event (e.g. XaverAward) and need to run Script 3 for the first time:</p>
-
+  <div class="section-header"><span class="section-num">12</span><h2>Adding a new event</h2><span class="section-new">NEW</span></div>
   <div class="loop-diagram">
-    <div class="loop-step" style="border-color:rgba(91,141,239,.4);color:var(--accent)">
-      1. Load fcinse with new event rows
-      <div class="loop-note">Context = "xaveraward", ContextDate = 2025</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(91,141,239,.4);color:var(--accent)">1. Load fcinse with new event rows</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(232,168,76,.4);color:var(--amber)">
-      2. Run Script 3 — first pass
-      <div class="loop-note">Most rows will be Orphans (B4 > 0) or Tier 3/4</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(232,168,76,.4);color:var(--amber)">2. Run Script 3 — first pass<div class="loop-note">Expect Orphans + Tier 3/4</div></div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(224,101,90,.4);color:var(--coral)">
-      3. Read QA output → section 16.E
-      <div class="loop-note">E section prints orphan rows already in DMInput format</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(224,101,90,.4);color:var(--coral)">3. Read QA section E → DMInput-ready list</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(155,127,232,.4);color:var(--purple)">
-      4. For each orphan: find EMFAID + fill assumption
-      <div class="loop-note">See Assumption Guide section below</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(155,127,232,.4);color:var(--purple)">4. Fill EMFAID + AssumptionValue for each orphan</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(77,184,168,.4);color:var(--teal)">
-      5. Add rows to DMInput in SharePoint
-      <div class="loop-note">Exact same ActivityEN + ActivityID as fcinse</div>
-    </div>
+    <div class="loop-step" style="border-color:rgba(77,184,168,.4);color:var(--teal)">5. Add rows to DMInput in SharePoint</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(232,168,76,.4);color:var(--amber)">
-      6. Run Power Query → DMHistory rebuilt
-    </div>
+    <div class="loop-step" style="border-color:rgba(232,168,76,.4);color:var(--amber)">6. Run Power Query → DMHistory rebuilt</div>
     <div class="loop-arrow-down">↓</div>
-    <div class="loop-step" style="border-color:rgba(76,175,130,.4);color:var(--green)">
-      7. Re-run Script 3 → B4 = 0, Tier 1 matches ✓
-    </div>
-  </div>
-
-  <div class="callout callout-blue">
-    <p><strong>Important:</strong> ActivityEN in DMInput must be <em>exactly</em> the same string as in fcinse (after normalization: lowercase, trimmed, single spaces). A single extra space or different capitalization = NoMatch.</p>
+    <div class="loop-step" style="border-color:rgba(76,175,130,.4);color:var(--green)">7. Re-run Script 3 → B4 = 0, Tier 1 ✓</div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════ ASSUMPTION GUIDE -->
 <section id="assumption">
-  <div class="section-header"><span class="section-num">13</span><h2>Assumption guide — how to fill DMInput</h2><span class="section-new">NEW</span></div>
-
-  <p>The assumption is the <strong>bridge</strong> between what your event data gives you (QtyUnit) and what the emission factor expects (its unit). Three questions to ask for every row:</p>
-
-  <pre><span class="cm">Question 1: What does my fcinse give me?</span>
-  → Look at Qty and QtyUnit
-
-<span class="cm">Question 2: What does the emission factor expect?</span>
-  → Look at EmFactUnit from the EMFAID
-
-<span class="cm">Question 3: How do I convert one to the other?</span>
-  → That conversion = AssumptionValue + AssumptionUnit</pre>
-
-  <h3>The golden rule — denominator cancellation</h3>
-  <div class="formula">
-    <span class="var-teal">QtyUnit</span>
-    <span class="op"> × </span>
-    <span class="var-amber">AssumptionUnit</span>
-    <span class="op"> = </span>
-    <span class="result">EF unit</span>
-    <span class="op">  (denominator of AssumptionUnit must match QtyUnit)</span>
-  </div>
-  <pre><span class="cm">unitday × day/unitday = day  ✅  (unitday cancels)</span>
-<span class="cm">CHF     × day/CHF     = day  ✅  (CHF cancels)</span>
-<span class="cm">portion × kg          = kg   ✅  (no denominator needed when QtyUnit is empty)</span>
-<span class="cm">pkm     × (nothing)   = pkm  ✅  (already in EF unit)</span></pre>
-
-  <h3>The 3 fields explained</h3>
+  <div class="section-header"><span class="section-num">13</span><h2>Assumption guide</h2><span class="section-new">NEW</span></div>
+  <div class="formula"><span class="var-teal">QtyUnit</span><span class="op"> × </span><span class="var-amber">AssumptionUnit</span><span class="op"> = </span><span class="result">EF unit</span></div>
   <table>
-    <thead><tr><th>Field</th><th>What it means</th><th>When to change it</th></tr></thead>
+    <thead><tr><th>Field</th><th>Rule</th></tr></thead>
     <tbody>
-      <tr><td><code>AssumptionValue</code></td><td>The numeric multiplier. How many physical units per event unit.</td><td>Always fill — minimum 1 if no real conversion needed. Null = no CO₂.</td></tr>
-      <tr><td><code>AssumptionUnit</code></td><td>The unit of the conversion. Denominator must cancel QtyUnit.</td><td>Set to "EFunit/QtyUnit". Leave empty if QtyUnit already equals EF unit.</td></tr>
-      <tr><td><code>AssumptionNote</code></td><td>Free text explaining the logic. Not used in calculation.</td><td>Always fill — helps future team members understand the assumption.</td></tr>
+      <tr><td><code>AssumptionValue</code></td><td>Always fill. Minimum = 1. Null = no CO₂.</td></tr>
+      <tr><td><code>AssumptionUnit</code></td><td>Denominator must cancel QtyUnit. Empty if already in EF unit.</td></tr>
+      <tr><td><code>AssumptionNote</code></td><td>Always fill for traceability. Not used in calculation.</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ══════════════════════════════════ ASSUMPTION PATTERNS -->
 <section id="assumption-patterns">
   <div class="section-header"><span class="section-num">14</span><h2>Common assumption patterns</h2><span class="section-new">NEW</span></div>
-
   <div class="assumption-grid">
-    <div class="assumption-card">
-      <div class="ac-type">Room rental / articles</div>
-      <div class="ac-formula">Qty=1 unitday  →  EF per day</div>
-      <div class="ac-example">AssumptionValue = <span>1</span><br>AssumptionUnit = <span>day/unitday</span><br>Note = <span>"1 unitday = 1 day"</span></div>
-    </div>
-    <div class="assumption-card">
-      <div class="ac-type">Security service (CHF-billed)</div>
-      <div class="ac-formula">Qty=500 CHF  →  EF per day (rate 500 CHF/day)</div>
-      <div class="ac-example">AssumptionValue = <span>0.002</span> (=1/500)<br>AssumptionUnit = <span>day/chf</span><br>Note = <span>"500CHF/day"</span></div>
-    </div>
-    <div class="assumption-card">
-      <div class="ac-type">Food item (portions)</div>
-      <div class="ac-formula">Qty=125 portions  →  EF per kg</div>
-      <div class="ac-example">AssumptionValue = <span>0.2</span> (kg/portion)<br>AssumptionUnit = <span>kg</span><br>Note = <span>"0.2 kg per portion"</span></div>
-    </div>
-    <div class="assumption-card">
-      <div class="ac-type">Car travel / mobility</div>
-      <div class="ac-formula">Qty=37050 pkm  →  EF per pkm</div>
-      <div class="ac-example">AssumptionValue = <span>1</span><br>AssumptionUnit = <span>(empty)</span><br>Note = <span>"pkm already in EF unit"</span></div>
-    </div>
-    <div class="assumption-card">
-      <div class="ac-type">Electricity / energy</div>
-      <div class="ac-formula">Qty=21086 kwh  →  EF per kwh</div>
-      <div class="ac-example">AssumptionValue = <span>1</span><br>AssumptionUnit = <span>(empty)</span><br>Note = <span>"kwh already in EF unit"</span></div>
-    </div>
-    <div class="assumption-card">
-      <div class="ac-type">Fuel / transaction (CHF→kwh)</div>
-      <div class="ac-formula">Qty=1200 CHF  →  EF per kwh (rate 8.33 kwh/CHF)</div>
-      <div class="ac-example">AssumptionValue = <span>8.333</span><br>AssumptionUnit = <span>kwh/chf</span><br>Note = <span>"2024 value, rate 8.33 kwh/CHF"</span></div>
-    </div>
+    <div class="assumption-card"><div class="ac-type">Room rental / articles</div><div class="ac-formula">unitday → day</div><div class="ac-example">Value=<span>1</span> · Unit=<span>day/unitday</span></div></div>
+    <div class="assumption-card"><div class="ac-type">Security (CHF-billed, 500 CHF/day)</div><div class="ac-formula">CHF → day</div><div class="ac-example">Value=<span>0.002</span> · Unit=<span>day/chf</span></div></div>
+    <div class="assumption-card"><div class="ac-type">Food item (portions → kg)</div><div class="ac-formula">portions → kg</div><div class="ac-example">Value=<span>0.2</span> · Unit=<span>kg</span></div></div>
+    <div class="assumption-card"><div class="ac-type">Car travel / mobility</div><div class="ac-formula">pkm → pkm</div><div class="ac-example">Value=<span>1</span> · Unit=<span>(empty)</span></div></div>
+    <div class="assumption-card"><div class="ac-type">Electricity</div><div class="ac-formula">kwh → kwh</div><div class="ac-example">Value=<span>1</span> · Unit=<span>(empty)</span></div></div>
+    <div class="assumption-card"><div class="ac-type">Fuel (CHF → kwh, rate 8.33)</div><div class="ac-formula">CHF → kwh</div><div class="ac-example">Value=<span>8.333</span> · Unit=<span>kwh/chf</span></div></div>
   </div>
-
-  <h3>Decision tree — what AssumptionValue to use</h3>
-  <pre><span class="kw">Is</span> QtyUnit already the same as the EF unit?
-  → YES: AssumptionValue = <span class="num">1</span>, AssumptionUnit = empty or same unit
-  → NO:
-      <span class="kw">Is</span> it a rate conversion (price per physical unit)?
-        → YES: AssumptionValue = <span class="num">1 / rate</span>  (e.g. 1/500 = 0.002 for 500 CHF/day)
-               AssumptionUnit = <span class="str">"EFunit/QtyUnit"</span>  (e.g. day/chf)
-      <span class="kw">Is</span> it a physical quantity per event unit?
-        → YES: AssumptionValue = <span class="num">quantity</span>  (e.g. 0.2 kg per portion)
-               AssumptionUnit = <span class="str">"EFunit"</span>  (e.g. kg)</pre>
 </section>
 
-<!-- ══════════════════════════════════ QA READING -->
 <section id="qa-reading">
   <div class="section-header"><span class="section-num">15</span><h2>Reading the QA output</h2><span class="section-new">NEW</span></div>
-  <p>After running Script 3, the console prints a full QA report. Here is how to read each section using the real MuuvFestival 2025 results as reference.</p>
-
   <h3>Section A — Row counts</h3>
   <div class="qa-grid">
-    <div class="qa-card ok"><div class="qa-id">A1 — FCIn rows</div><div class="qa-val">990</div><div class="qa-desc">Total activity rows loaded from fcinse. Your baseline.</div></div>
-    <div class="qa-card ok"><div class="qa-id">A2 — Legacy DM rows</div><div class="qa-val">0</div><div class="qa-desc">DM rows excluded as "legacy" for this batch's keys. 0 is ideal.</div></div>
-    <div class="qa-card ok"><div class="qa-id">A3 — FCOut rows</div><div class="qa-val">990</div><div class="qa-desc">Must equal A1. Every input row gets an output row. ✅</div></div>
+    <div class="qa-card ok"><div class="qa-id">A1 — FCIn rows</div><div class="qa-val">990</div><div class="qa-desc">Total rows loaded. Your baseline.</div></div>
+    <div class="qa-card ok"><div class="qa-id">A3 — FCOut rows</div><div class="qa-val">990</div><div class="qa-desc">Must equal A1. ✅</div></div>
   </div>
-
-  <h3>Section B — Orphans (NoMatch)</h3>
+  <h3>Section B — Orphans</h3>
   <div class="qa-grid">
-    <div class="qa-card ok"><div class="qa-id">B4 — Orphans (non-location)</div><div class="qa-val">0</div><div class="qa-desc">FC rows with no key match in DM at all. Target = 0. Each orphan = missing DMInput entry.</div></div>
+    <div class="qa-card ok"><div class="qa-id">B4 — Orphans</div><div class="qa-val">0</div><div class="qa-desc">Target = 0. If B4 > 0 → read Section E for DMInput-ready list.</div></div>
   </div>
-  <div class="callout callout-coral">
-    <p><strong>If B4 &gt; 0:</strong> Read section 16.E in the console — it prints the orphan rows already formatted as a DMInput table, ready to copy into SharePoint. Add the EMFAID and AssumptionValue for each one, rebuild DMHistory, re-run.</p>
-  </div>
-
-  <h3>Section C — Duplicates &amp; multiplicities</h3>
+  <h3>Section C — Duplicates</h3>
   <div class="qa-grid">
-    <div class="qa-card info"><div class="qa-id">C1 — DM duplicates (keys only)</div><div class="qa-val">97</div><div class="qa-desc">Activities with multiple DM rows across different years/contexts. Normal and expected.</div></div>
-    <div class="qa-card info"><div class="qa-id">C2 — DM duplicates (keys+context)</div><div class="qa-val">74</div><div class="qa-desc">Same activity in same context but different years. Also normal.</div></div>
-    <div class="qa-card warn"><div class="qa-id">C3 — DM duplicates (keys+context+year)</div><div class="qa-val">4</div><div class="qa-desc">True duplicates — same keys + context + year. Caused by double spaces in source data. Tiebreak handles it automatically.</div></div>
-    <div class="qa-card ok"><div class="qa-id">C4 vs baseline</div><div class="qa-val">193 = 193</div><div class="qa-desc">Post-join multiplicities must equal FC baseline. Equal = no extra rows created by join. ✅</div></div>
+    <div class="qa-card info"><div class="qa-id">C1 — Keys only</div><div class="qa-val">97</div><div class="qa-desc">Multiple DM rows across years/contexts. Normal.</div></div>
+    <div class="qa-card info"><div class="qa-id">C2 — Keys+context</div><div class="qa-val">74</div><div class="qa-desc">Same context, different years. Normal.</div></div>
+    <div class="qa-card warn"><div class="qa-id">C3 — True dups</div><div class="qa-val">4</div><div class="qa-desc">Same keys+context+year. Double spaces. Tiebreak handles it.</div></div>
+    <div class="qa-card ok"><div class="qa-id">C4 vs baseline</div><div class="qa-val">193 = 193</div><div class="qa-desc">Post-join count = FC baseline. ✅</div></div>
   </div>
-
   <h3>Section D — CO₂ coverage</h3>
   <div class="qa-grid">
-    <div class="qa-card ok"><div class="qa-id">D1 — Non-location rows</div><div class="qa-val">703</div><div class="qa-desc">287 rows are location rows (excluded from CO₂ by design).</div></div>
-    <div class="qa-card ok"><div class="qa-id">D2 — Qty non-null</div><div class="qa-val">703 (100%)</div><div class="qa-desc">All rows have a quantity. ✅</div></div>
-    <div class="qa-card warn"><div class="qa-id">D3 — QtyTot non-null</div><div class="qa-val">655 (93.2%)</div><div class="qa-desc">48 rows missing QtyTot. Caused by null Qty in some food rows (portions not entered in fcinse).</div></div>
-    <div class="qa-card warn"><div class="qa-id">D7 — Missing EF</div><div class="qa-val">4 → cooling</div><div class="qa-desc">4 rows for "cooling" have no EmissionFactor in the EF library. Add EF for cooling in reference data.</div></div>
+    <div class="qa-card ok"><div class="qa-id">D1 — Non-location</div><div class="qa-val">703</div><div class="qa-desc">287 location rows excluded from CO₂ by design.</div></div>
+    <div class="qa-card warn"><div class="qa-id">D3 — QtyTot non-null</div><div class="qa-val">655 (93%)</div><div class="qa-desc">48 food rows missing Qty in fcinse.</div></div>
+    <div class="qa-card warn"><div class="qa-id">D7 — Missing EF</div><div class="qa-val">4 → cooling</div><div class="qa-desc">Add EmissionFactor for cooling in EF reference.</div></div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════ QA TIERS -->
 <section id="qa-tiers">
-  <div class="section-header"><span class="section-num">16</span><h2>Tier distribution — what good looks like</h2><span class="section-new">NEW</span></div>
-
-  <p>Section D of the monitoring output shows how many rows matched at each tier. This is the most important quality signal.</p>
-
+  <div class="section-header"><span class="section-num">16</span><h2>Tier distribution</h2><span class="section-new">NEW</span></div>
   <div class="example">
-    <div class="example-label" style="color:var(--green)">MuuvFestival 2025 — ideal result</div>
-    <div class="example-row"><span class="example-key">Tier 1 (Context+Year)</span><span class="example-val hi">703 rows (71%) — perfect matches ✅</span></div>
-    <div class="example-row"><span class="example-key">Tier 2 (Year only)</span><span class="example-val">0 rows (0%)</span></div>
-    <div class="example-row"><span class="example-key">Tier 3 (Context only)</span><span class="example-val">0 rows (0%)</span></div>
-    <div class="example-row"><span class="example-key">Tier 4 (fallback)</span><span class="example-val mid">287 rows (29%) — all location rows, no EF needed</span></div>
+    <div class="example-label" style="color:var(--green)">MuuvFestival 2025 — ideal</div>
+    <div class="example-row"><span class="example-key">Tier 1</span><span class="example-val hi">703 rows (71%) ✅</span></div>
+    <div class="example-row"><span class="example-key">Tier 2 / 3</span><span class="example-val">0 rows</span></div>
+    <div class="example-row"><span class="example-key">Tier 4</span><span class="example-val mid">287 rows — location only</span></div>
   </div>
-
   <table>
-    <thead><tr><th>What you see</th><th>What it means</th><th>Action</th></tr></thead>
+    <thead><tr><th>What you see</th><th>Action</th></tr></thead>
     <tbody>
-      <tr><td>Tier 1 = 100% of non-location rows</td><td>Perfect. All activity rows have a DM entry for this exact event + year.</td><td>None needed ✅</td></tr>
-      <tr><td>High Tier 2 or Tier 3</td><td>DM entries exist but for different context or year. Matches are borrowed.</td><td>Add Context+ContextDate to DMInput for this event</td></tr>
-      <tr><td>High Tier 4 (non-location)</td><td>Keys matched but no context/year info in DM. Weakest match.</td><td>Add proper DMInput rows with Context + ContextDate</td></tr>
-      <tr><td>B4 orphans &gt; 0</td><td>Some keys don't exist in DM at all.</td><td>Add missing rows to DMInput (use section 16.E output)</td></tr>
+      <tr><td>Tier 1 = 100% non-location</td><td>None ✅</td></tr>
+      <tr><td>High Tier 2 or 3</td><td>Add Context+ContextDate to DMInput</td></tr>
+      <tr><td>High Tier 4 (non-location)</td><td>Add proper DMInput rows</td></tr>
+      <tr><td>B4 orphans > 0</td><td>Use Section E → DMInput</td></tr>
     </tbody>
   </table>
-
-  <div class="callout callout-green">
-    <p><strong>First run of a new event</strong> (e.g. XaverAward): expect high Tier 3/4 because no DM entries exist for this context yet. After adding DMInput rows + rebuilding DMHistory + re-running → Tier 1 should dominate.</p>
-  </div>
 </section>
 
-<!-- ══════════════════════════════════ QA ISSUES -->
 <section id="qa-issues">
   <div class="section-header"><span class="section-num">17</span><h2>Known issues &amp; fixes</h2><span class="section-new">NEW</span></div>
-
   <table>
-    <thead><tr><th>Issue</th><th>Where visible</th><th>Cause</th><th>Fix</th></tr></thead>
+    <thead><tr><th>Issue</th><th>Where</th><th>Fix</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>cooling has no EF</strong></td>
-        <td>D7 — 4 rows</td>
-        <td>The "cooling" activity is matched to a DM row but the linked EMFAID has no EmissionFactor value</td>
-        <td>Add EmissionFactor for cooling in the EF reference data</td>
-      </tr>
-      <tr>
-        <td><strong>48 rows with null QtyTot</strong></td>
-        <td>D3 — 655 vs 703</td>
-        <td>Some food rows in fcinse have empty Qty (portions not entered)</td>
-        <td>Fill in the missing Qty values in fcinse for food rows</td>
-      </tr>
-      <tr>
-        <td><strong>C3 duplicates (4 groups)</strong></td>
-        <td>C3 — 4</td>
-        <td>Double spaces in ActivityEN in DMInput (e.g. "chair: without armrest  black"). After normalization, 2-space and 1-space versions become identical.</td>
-        <td>Clean double spaces in SharePoint DMInput. Tiebreak handles it automatically in the meantime.</td>
-      </tr>
-      <tr>
-        <td><strong>5 FC contexts not in DM</strong></td>
-        <td>Monitoring C</td>
-        <td>fcinse has activity+context combinations that have no DM row yet for that specific context</td>
-        <td>Add DMInput rows with the missing Context values</td>
-      </tr>
-      <tr>
-        <td><strong>374 DM rows with empty Context</strong></td>
-        <td>Monitoring A</td>
-        <td>DMStatus="new" rows added without a Context (e.g. rows added 28/03/2026). These can only be Tier 4 fallback.</td>
-        <td>Add Context + ContextDate to those DMInput rows if a specific event is intended</td>
-      </tr>
+      <tr><td><strong>cooling has no EF</strong></td><td>D7 — 4 rows</td><td>Add EmissionFactor for cooling in EF reference data</td></tr>
+      <tr><td><strong>48 null QtyTot</strong></td><td>D3</td><td>Fill missing Qty in fcinse food rows</td></tr>
+      <tr><td><strong>C3 duplicates (4)</strong></td><td>C3</td><td>Clean double spaces in SharePoint DMInput</td></tr>
+      <tr><td><strong>5 FC contexts not in DM</strong></td><td>Monitoring C</td><td>Add DMInput rows with those Context values</td></tr>
+      <tr><td><strong>374 DM rows empty Context</strong></td><td>Monitoring A</td><td>Add Context + ContextDate to those DMInput rows</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ══════════════════════════════════ CELL INDEX -->
 <section id="cells">
   <div class="section-header"><span class="section-num">18</span><h2>Cell index</h2></div>
   <table>
     <thead><tr><th>Cell</th><th>Name</th><th>Purpose</th></tr></thead>
     <tbody>
-      <tr><td><span class="cell-ref">0</span></td><td>Header comment</td><td>Script description and matching logic summary</td></tr>
-      <tr><td><span class="cell-ref">1</span></td><td>Imports</td><td>PySpark session + function imports</td></tr>
-      <tr><td><span class="cell-ref">2</span></td><td>ENV selector</td><td>Switch between "bex" and "se"</td></tr>
-      <tr><td><span class="cell-ref">3</span></td><td>Parameters</td><td>All flags and constants (exclusion rules, column lists)</td></tr>
-      <tr><td><span class="cell-ref">4</span></td><td>Validation</td><td>Check tables exist in active lakehouse. Prints config summary.</td></tr>
-      <tr><td><span class="cell-ref">5</span></td><td>Text cleaning</td><td>canonText() and normalizeForLookup() functions</td></tr>
-      <tr><td><span class="cell-ref">6</span></td><td>Exclusions</td><td>applyFcExclusions(), applyDmExclusions(), limitDmToBatch()</td></tr>
-      <tr><td><span class="cell-ref">7</span></td><td>Matching engine</td><td>prepareDmColumns(), selectDmPerFc() with tiering + tiebreak</td></tr>
-      <tr><td><span class="cell-ref">8</span></td><td>Load tables</td><td>spark.table() for FCIn and DMHistory</td></tr>
-      <tr><td><span class="cell-ref">9</span></td><td>Apply exclusions</td><td>Run exclusion + normalization on both dataframes</td></tr>
-      <tr><td><span class="cell-ref">10</span></td><td>Prepare DM</td><td>Limit DM to batch keys + rename with _dm suffix</td></tr>
-      <tr><td><span class="cell-ref">11</span></td><td>Run matching</td><td>Execute selectDmPerFc() → produces dfSelected</td></tr>
+      <tr><td><span class="cell-ref">0</span></td><td>Header comment</td><td>Script description</td></tr>
+      <tr><td><span class="cell-ref">1</span></td><td>Imports</td><td>Session + function imports</td></tr>
+      <tr><td><span class="cell-ref">2</span></td><td>ENV selector</td><td>Switch "bex" / "se"</td></tr>
+      <tr><td><span class="cell-ref">3</span></td><td>Parameters</td><td>All flags and constants</td></tr>
+      <tr><td><span class="cell-ref">4</span></td><td>Validation</td><td>Check tables exist. Config summary.</td></tr>
+      <tr><td><span class="cell-ref">5</span></td><td>Text cleaning</td><td>canonText() and normalizeForLookup()</td></tr>
+      <tr><td><span class="cell-ref">6</span></td><td>Exclusions</td><td>applyFcExclusions(), applyDmExclusions()</td></tr>
+      <tr><td><span class="cell-ref">7</span></td><td>Matching engine</td><td>prepareDmColumns(), selectDmPerFc()</td></tr>
+      <tr><td><span class="cell-ref">8</span></td><td>Load tables</td><td>Read FCIn and DMHistory</td></tr>
+      <tr><td><span class="cell-ref">9</span></td><td>Apply exclusions</td><td>Exclusion + normalization on both</td></tr>
+      <tr><td><span class="cell-ref">10</span></td><td>Prepare DM</td><td>Limit to batch + rename _dm suffix</td></tr>
+      <tr><td><span class="cell-ref">11</span></td><td>Run matching</td><td>Execute selectDmPerFc() → dfSelected</td></tr>
       <tr><td><span class="cell-ref">12</span></td><td>CO₂ calculation</td><td>QtyTot and EmissionsKgCO2eq</td></tr>
-      <tr><td><span class="cell-ref">13</span></td><td>QtyTotUnit</td><td>Unit derivation with denominator cancellation</td></tr>
+      <tr><td><span class="cell-ref">13</span></td><td>QtyTotUnit</td><td>Unit derivation</td></tr>
       <tr><td><span class="cell-ref">14</span></td><td>ImportDate</td><td>Timestamp column</td></tr>
       <tr><td><span class="cell-ref">15</span></td><td>Population</td><td>DM population priority merge</td></tr>
-      <tr><td><span class="cell-ref">16</span></td><td>ConfidenceLevel</td><td>Combined DM + Activity confidence → "N - Label"</td></tr>
-      <tr><td><span class="cell-ref">17</span></td><td>CATID</td><td>Category ID with mobility population suffix</td></tr>
-      <tr><td><span class="cell-ref">18</span></td><td>Drop tech cols</td><td>Remove _k, _dm, _ref columns from output</td></tr>
+      <tr><td><span class="cell-ref">16</span></td><td>ConfidenceLevel</td><td>Combined DM + Activity confidence</td></tr>
+      <tr><td><span class="cell-ref">17</span></td><td>CATID</td><td>Category ID with mobility suffix</td></tr>
+      <tr><td><span class="cell-ref">18</span></td><td>Drop tech cols</td><td>Remove _k, _dm, _ref columns</td></tr>
       <tr><td><span class="cell-ref">19</span></td><td>Write main output</td><td>Overwrite fcoutbex / fcoutse</td></tr>
-      <tr><td><span class="cell-ref">20</span></td><td>Write backup</td><td>Append to bkfcout with run timestamp label</td></tr>
-      <tr><td><span class="cell-ref">21</span></td><td>QA — volumetry</td><td>Row counts, orphans, DM duplicates, CO₂ coverage. Section E = DMInput-ready orphan list.</td></tr>
-      <tr><td><span class="cell-ref">22</span></td><td>QA — C3 debug</td><td>Investigate C3 tier-3 duplicates in DMHistory</td></tr>
-      <tr><td><span class="cell-ref">23</span></td><td>QA — monitoring</td><td>Assert 1-1 ratio, tier distribution, coverage %</td></tr>
-      <tr><td><span class="cell-ref">24</span></td><td>QA — raw dups</td><td>Check raw DMHistory duplicates before normalization</td></tr>
-      <tr><td><span class="cell-ref">25</span></td><td>Cache cleanup</td><td>Unpersist cached dataframes</td></tr>
+      <tr><td><span class="cell-ref">20</span></td><td>Write backup</td><td>Append to bkfcout with timestamp</td></tr>
+      <tr><td><span class="cell-ref">21</span></td><td>QA — volumetry</td><td>Row counts, orphans, dups, CO₂ coverage. Section E = DMInput-ready orphan list.</td></tr>
+      <tr><td><span class="cell-ref">22</span></td><td>QA — C3 debug</td><td>Investigate C3 tier-3 duplicates</td></tr>
+      <tr><td><span class="cell-ref">23</span></td><td>QA — monitoring</td><td>Tier distribution, 1-1 ratio, coverage %</td></tr>
+      <tr><td><span class="cell-ref">24</span></td><td>QA — raw dups</td><td>Raw DMHistory duplicates before normalization</td></tr>
+      <tr><td><span class="cell-ref">25</span></td><td>Cache cleanup</td><td>Unpersist dataframes</td></tr>
       <tr><td><span class="cell-ref">26</span></td><td>DIAG Population</td><td>Detailed population + CATID diagnostic</td></tr>
       <tr><td><span class="cell-ref">27</span></td><td>QA ConfidenceLevel</td><td>Distinct combinations check</td></tr>
       <tr><td><span class="cell-ref">28</span></td><td>QA Population</td><td>Distinct population values check</td></tr>
@@ -882,45 +536,32 @@ DMInput:  articles + <span class="str">""</span> + <span class="str">"security /
   </table>
 </section>
 
-<!-- ══════════════════════════════════ QA CHECKS -->
 <section id="qa">
   <div class="section-header"><span class="section-num">19</span><h2>QA checks reference</h2></div>
   <table>
-    <thead><tr><th>Check</th><th>Cell</th><th>Target</th><th>What to do if off</th></tr></thead>
+    <thead><tr><th>Check</th><th>Cell</th><th>Target</th><th>If off</th></tr></thead>
     <tbody>
-      <tr><td><strong>A1</strong> FCIn rows</td><td><span class="cell-ref">21</span></td><td>= expected event rows</td><td>Verify fcinse loaded correctly</td></tr>
-      <tr><td><strong>A3</strong> FCOut rows</td><td><span class="cell-ref">21</span></td><td>= A1</td><td>Should never differ — check for script errors</td></tr>
-      <tr><td><strong>B4</strong> Orphans</td><td><span class="cell-ref">21</span></td><td>= 0</td><td>Read 16.E output → add missing rows to DMInput</td></tr>
-      <tr><td><strong>C3</strong> True DM dups</td><td><span class="cell-ref">21</span></td><td>= 0</td><td>Clean double spaces in SharePoint DMInput</td></tr>
-      <tr><td><strong>C4</strong> vs baseline</td><td><span class="cell-ref">21</span></td><td>C4 = baseline FC</td><td>If C4 &gt; baseline: DM has un-tiered duplicates → review DMInput</td></tr>
-      <tr><td><strong>D6</strong> CO₂ coverage</td><td><span class="cell-ref">21</span></td><td>= 100% of non-location</td><td>D7 shows which activities are missing EF → add to EF library</td></tr>
-      <tr><td><strong>Tier 1</strong> %</td><td><span class="cell-ref">23</span></td><td>= 100% of non-location</td><td>Add DMInput rows with correct Context + ContextDate</td></tr>
+      <tr><td><strong>A3</strong> FCOut rows</td><td><span class="cell-ref">21</span></td><td>= A1</td><td>Check for script errors</td></tr>
+      <tr><td><strong>B4</strong> Orphans</td><td><span class="cell-ref">21</span></td><td>= 0</td><td>Read 16.E → add to DMInput</td></tr>
+      <tr><td><strong>C3</strong> True dups</td><td><span class="cell-ref">21</span></td><td>= 0</td><td>Clean double spaces in DMInput</td></tr>
+      <tr><td><strong>C4</strong> vs baseline</td><td><span class="cell-ref">21</span></td><td>= baseline</td><td>Review DMInput for un-tiered dups</td></tr>
+      <tr><td><strong>D6</strong> CO₂ coverage</td><td><span class="cell-ref">21</span></td><td>100%</td><td>D7 shows missing EF → add to library</td></tr>
+      <tr><td><strong>Tier 1 %</strong></td><td><span class="cell-ref">23</span></td><td>100% non-location</td><td>Add DMInput rows with Context + ContextDate</td></tr>
     </tbody>
   </table>
 </section>
 
-<!-- ══════════════════════════════════ CONFIG -->
 <section id="config">
   <div class="section-header"><span class="section-num">20</span><h2>Configuration reference</h2></div>
-
-  <h3>Switching event stream</h3>
-  <pre><span class="cm"># Cell 2 — only line to change</span>
-<span class="kw">ENV</span> = <span class="str">"bex"</span>  <span class="cm"># → fcinbex / fcoutbex</span>
-<span class="kw">ENV</span> = <span class="str">"se"</span>   <span class="cm"># → fcinse  / fcoutse   (MuuvFestival, XaverAward…)</span></pre>
-
-  <h3>Switching workspace (Cell 20)</h3>
-  <pre><span class="kw">DB</span> = <span class="str">"GHGBEX"</span>                 <span class="cm"># production workspace</span>
-<span class="kw">DB</span> = <span class="str">"CarbonFootprint_yassin"</span>  <span class="cm"># test workspace</span>
-<span class="cm"># Also: set CarbonFootprint_yassin as default lakehouse in Fabric left panel</span></pre>
-
-  <h3>Exclusion flags (Cell 3)</h3>
+  <pre><span class="kw">ENV</span> = <span class="str">"bex"</span>  <span class="cm"># → fcinbex / fcoutbex</span>
+<span class="kw">ENV</span> = <span class="str">"se"</span>   <span class="cm"># → fcinse  / fcoutse</span></pre>
   <table>
-    <thead><tr><th>Flag</th><th>Default</th><th>Effect when True</th></tr></thead>
+    <thead><tr><th>Flag</th><th>Default</th><th>Effect</th></tr></thead>
     <tbody>
-      <tr><td><code>EXCLUDE_FC_STATUS_EXCL</code></td><td><span class="badge badge-green">True</span></td><td>Drop FCIn rows where Status = "Excl."</td></tr>
-      <tr><td><code>EXCLUDE_FC_LOCATION</code></td><td><span class="badge badge-coral">False</span></td><td>Drop FCIn location rows (disabled — locations needed for distance calc)</td></tr>
-      <tr><td><code>EXCLUDE_DM_LEGACY</code></td><td><span class="badge badge-green">True</span></td><td>Drop DMHistory rows where DMStatus = "legacy" or "history"</td></tr>
-      <tr><td><code>CANONIZE_KEYS</code></td><td><span class="badge badge-green">True</span></td><td>Create _k shadow columns for normalized joins</td></tr>
+      <tr><td><code>EXCLUDE_FC_STATUS_EXCL</code></td><td><span class="badge badge-green">True</span></td><td>Drop Status = "Excl."</td></tr>
+      <tr><td><code>EXCLUDE_FC_LOCATION</code></td><td><span class="badge badge-coral">False</span></td><td>Disabled — keep location rows</td></tr>
+      <tr><td><code>EXCLUDE_DM_LEGACY</code></td><td><span class="badge badge-green">True</span></td><td>Drop legacy/history DM rows</td></tr>
+      <tr><td><code>CANONIZE_KEYS</code></td><td><span class="badge badge-green">True</span></td><td>Create _k shadow columns</td></tr>
     </tbody>
   </table>
 </section>
@@ -933,19 +574,48 @@ DMInput:  articles + <span class="str">""</span> + <span class="str">"security /
   <span>Script 3 Match &amp; Calculation — v2 — March 2026</span>
 </footer>
 
+</div><!-- /app -->
+
 <script>
+  const CORRECT = 'Carbondata123@';
+
+  function checkPassword() {
+    const input = document.getElementById('gate-input');
+    const error = document.getElementById('gate-error');
+    if (input.value === CORRECT) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      sessionStorage.setItem('ghg_unlocked', '1');
+    } else {
+      input.classList.remove('shake');
+      void input.offsetWidth;
+      input.classList.add('shake');
+      error.textContent = 'Incorrect password.';
+      input.value = '';
+    }
+  }
+
+  document.getElementById('gate-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  if (sessionStorage.getItem('ghg_unlocked') === '1') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  }
+
   const sections = document.querySelectorAll('section[id]');
   const links = document.querySelectorAll('nav a');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
       if (e.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        links.forEach(function(l) { l.classList.remove('active'); });
+        const active = document.querySelector('nav a[href="#' + e.target.id + '"]');
         if (active) active.classList.add('active');
       }
     });
   }, { threshold: 0.25 });
-  sections.forEach(s => observer.observe(s));
+  sections.forEach(function(s) { observer.observe(s); });
 </script>
 </body>
 </html>
